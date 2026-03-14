@@ -1,5 +1,17 @@
 # React + Vite
 
+## API configuration
+
+This frontend expects a backend API.
+
+By default it sends requests to `http://127.0.0.1:8000/api/`.
+
+If your backend runs elsewhere, create a `.env` file in the project root and set:
+
+```env
+VITE_API_BASE_URL=http://localhost:8000/api/
+```
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

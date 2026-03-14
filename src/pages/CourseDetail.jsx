@@ -1,39 +1,48 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import API from "../api/api";
+import API, { getApiErrorMessage } from "../api/api";
 
 function CourseDetail() {
-	const { id } = useParams();
-	const [course, setCourse] = useState(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState("");
 
-	useEffect(() => {
-		setLoading(true);
-		setError("");
+  const { id } = useParams();
+  const [course, setCourse] = useState(null);
+  const [error, setError] = useState("");
 
-		API.get(`courses/${id}/`)
-			.then((res) => {
-				setCourse(res.data);
-			})
-			.catch(() => {
-				setError("Failed to load course details.");
-			})
-			.finally(() => {
-				setLoading(false);
-			});
-	}, [id]);
+  useEffect(() => {
+    setError("");
 
-	if (loading) return <p>Loading course...</p>;
-	if (error) return <p>{error}</p>;
-	if (!course) return <p>Course not found.</p>;
+    API.get(`courses/${id}/`)
+      .then(res => setCourse(res.data))
+      .catch((err) => {
+        setCourse(null);
+        setError(getApiErrorMessage(err));
+      });
+  }, [id]);
 
-	return (
-		<div>
-			<h1>{course.title}</h1>
-			<p>{course.description}</p>
-		</div>
-	);
+  if (error) return <p>{error}</p>;
+  if (!course) return <p>Loading...</p>;
+
+  return (
+    <div>
+
+      <h1>{course.title}</h1>
+      <p>{course.description}</p>
+
+      <h3>Modules</h3>
+
+      {course.modules?.map(module => (
+        <div key={module.id}>
+          <h4>{module.title}</h4>
+
+          {module.lessons?.map(lesson => (
+            <p key={lesson.id}>{lesson.title}</p>
+          ))}
+
+        </div>
+      ))}
+
+    </div>
+  );
 }
 
 export default CourseDetail;
