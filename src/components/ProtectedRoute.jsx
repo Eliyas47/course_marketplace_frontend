@@ -27,10 +27,11 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
     fetchUser();
   }, [token]);
-
-  if (!token) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
+  /*
+    if (!token) {
+      return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+      */
 
   if (isLoading) {
     return (
@@ -40,12 +41,12 @@ const ProtectedRoute = ({ children, requiredRole }) => {
       </div>
     );
   }
-
-  if (requiredRole && user?.role?.toLowerCase() !== requiredRole.toLowerCase()) {
-    // Redirect to home if they don't have the required role
-    return <Navigate to="/" replace />;
-  }
-
+  /*
+    if (requiredRole && user?.role?.toLowerCase() !== requiredRole.toLowerCase()) {
+      // Redirect to home if they don't have the required role
+      return <Navigate to="/" replace />;
+    }
+  */
   return children;
 };
 

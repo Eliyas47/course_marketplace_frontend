@@ -165,16 +165,14 @@ h6 {
   color: var(--text-main);
 }
 
-.logo-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--primary), var(--secondary));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  box-shadow: 0 4px 12px var(--primary-glow);
+.brand-logo-image {
+  display: block;
+  height: 46px;
+  width: auto;
+}
+
+.footer-brand-logo {
+  height: 68px;
 }
 
 .nav-links {
@@ -505,6 +503,14 @@ h6 {
 @media (max-width: 640px) {
   .dashboard-page {
     padding-bottom: 72px !important;
+  }
+
+  .brand-logo-image {
+    height: 40px;
+  }
+
+  .footer-brand-logo {
+    height: 54px;
   }
 
   .dashboard-actions .btn {
