@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api';
+const envBaseUrl = (import.meta.env.VITE_API_BASE_URL || '').trim();
+const API_BASE_URL = (envBaseUrl || '/api').replace(/\/+$/, '');
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -29,11 +30,12 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const refreshToken = localStorage.getItem('refresh_token');
+    const requestUrl = originalRequest?.url || '';
     
     // Don't retry for these endpoints to avoid infinite loops or redundant errors
-    const isAuthRequest = originalRequest.url.includes('/auth/login/') || 
-                         originalRequest.url.includes('/auth/token/refresh/') ||
-                         originalRequest.url.includes('/auth/register/');
+    const isAuthRequest = requestUrl.includes('/auth/login/') || 
+                         requestUrl.includes('/auth/token/refresh/') ||
+                         requestUrl.includes('/auth/register/');
 
     if (
       error.response?.status === 401 &&

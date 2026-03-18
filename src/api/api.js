@@ -1,20 +1,4 @@
-import axios from "axios";
-
-const defaultBaseUrl = "http://127.0.0.1:8000/api/";
-
-const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || defaultBaseUrl,
-});
-
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
-});
+import API from './axios';
 
 export function getApiErrorMessage(error) {
   if (error.code === "ERR_NETWORK") {

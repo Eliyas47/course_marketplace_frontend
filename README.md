@@ -4,13 +4,18 @@
 
 This frontend expects a backend API.
 
-By default it sends requests to `http://127.0.0.1:8000/api/`.
+By default it sends requests to `/api` (which is proxied by Vite in development).
 
 If your backend runs elsewhere, create a `.env` file in the project root and set:
 
 ```env
 VITE_API_BASE_URL=http://localhost:8000/api/
 ```
+
+Notes:
+
+- Keep the `/api` prefix if your backend routes are namespaced under `/api`.
+- The token pair is stored as `access_token` and `refresh_token` in `localStorage`.
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

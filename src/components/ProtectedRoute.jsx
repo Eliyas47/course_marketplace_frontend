@@ -20,6 +20,9 @@ const ProtectedRoute = ({ children, requiredRole }) => {
         setUser(response.data);
       } catch (err) {
         console.error('ProtectedRoute: Failed to fetch user profile', err);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -27,11 +30,9 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
     fetchUser();
   }, [token]);
-  /*
-    if (!token) {
-      return <Navigate to="/login" state={{ from: location }} replace />;
-    }
-      */
+  if (!token) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
   if (isLoading) {
     return (
@@ -41,12 +42,14 @@ const ProtectedRoute = ({ children, requiredRole }) => {
       </div>
     );
   }
-  /*
-    if (requiredRole && user?.role?.toLowerCase() !== requiredRole.toLowerCase()) {
-      // Redirect to home if they don't have the required role
-      return <Navigate to="/" replace />;
-    }
-  */
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  if (requiredRole && user?.role?.toLowerCase() !== requiredRole.toLowerCase()) {
+    return <Navigate to="/" replace />;
+  }
+
   return children;
 };
 
