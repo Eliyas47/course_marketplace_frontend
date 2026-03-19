@@ -165,6 +165,7 @@ h6 {
   color: var(--text-main);
 }
 
+<<<<<<< HEAD
 .brand-logo-image {
   display: block;
   height: 46px;
@@ -173,6 +174,18 @@ h6 {
 
 .footer-brand-logo {
   height: 68px;
+=======
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px var(--primary-glow);
+>>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
 }
 
 .nav-links {
@@ -505,6 +518,7 @@ h6 {
     padding-bottom: 72px !important;
   }
 
+<<<<<<< HEAD
   .brand-logo-image {
     height: 40px;
   }
@@ -513,6 +527,8 @@ h6 {
     height: 54px;
   }
 
+=======
+>>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
   .dashboard-actions .btn {
     width: 100%;
   }

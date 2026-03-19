@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom';
+<<<<<<< HEAD
 import learnhubLogo from '../assets/learnhub-logo.png';
+=======
+>>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
 
 const Footer = () => {
   return (
@@ -7,11 +10,20 @@ const Footer = () => {
       <div className="container footer-content">
         <div className="footer-section">
           <Link to="/" className="nav-logo" style={{ marginBottom: '1.5rem' }}>
+<<<<<<< HEAD
             <img
               src={learnhubLogo}
               alt="LearnHub Course Marketplace"
               className="brand-logo-image footer-brand-logo"
             />
+=======
+            <div className="logo-icon">
+              <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <span className="text-gradient font-heading">LearnHub</span>
+>>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
           </Link>
           <p style={{ color: 'var(--text-muted)', maxWidth: '300px' }}>
             Empowering learners worldwide through high-quality, accessible online education from top industry experts.

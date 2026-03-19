@@ -1,8 +1,12 @@
 import axios from 'axios';
 
+<<<<<<< HEAD
 const envBaseUrl = (import.meta.env.VITE_API_BASE_URL || '').trim();
 const API_BASE_URL = (envBaseUrl || '/api').replace(/\/+$/, '');
 const TOKEN_REFRESH_PATHS = ['/token/refresh/', '/auth/token/refresh/'];
+=======
+const API_BASE_URL = '/api';
+>>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -31,6 +35,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const refreshToken = localStorage.getItem('refresh_token');
+<<<<<<< HEAD
     const requestUrl = originalRequest?.url || '';
     
     // Don't retry for these endpoints to avoid infinite loops or redundant errors
@@ -39,6 +44,13 @@ api.interceptors.response.use(
       requestUrl.includes('/auth/register/') ||
       requestUrl.includes('/token/refresh/') ||
       requestUrl.includes('/auth/token/refresh/');
+=======
+    
+    // Don't retry for these endpoints to avoid infinite loops or redundant errors
+    const isAuthRequest = originalRequest.url.includes('/auth/login/') || 
+                         originalRequest.url.includes('/auth/token/refresh/') ||
+                         originalRequest.url.includes('/auth/register/');
+>>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
 
     if (
       error.response?.status === 401 &&
@@ -48,6 +60,7 @@ api.interceptors.response.use(
     ) {
       originalRequest._retry = true;
       try {
+<<<<<<< HEAD
         let response;
 
         // Prefer the current backend path and fall back to legacy path if needed.
@@ -68,6 +81,11 @@ api.interceptors.response.use(
         if (!response) {
           throw new Error('No token refresh endpoint was reachable.');
         }
+=======
+        const response = await axios.post(`${API_BASE_URL}/auth/token/refresh/`, {
+          refresh: refreshToken,
+        });
+>>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
         
         const { access } = response.data;
         localStorage.setItem('access_token', access);
