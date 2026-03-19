@@ -44,7 +44,7 @@ const Register = () => {
 
     try {
       await api.post('/auth/register/', payload);
-      showToast('Account created! Please check your email for a verification link to activate your account.', 'success');
+      showToast('Account created successfully. You can now sign in with your password.', 'success');
       navigate('/login');
     } catch (err) {
       console.error('Registration error detail:', err.response?.data);

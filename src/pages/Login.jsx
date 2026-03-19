@@ -69,7 +69,18 @@ const Login = () => {
     };
 
     try {
-      const response = await api.post('/auth/login/', trimmedPayload);
+      let response;
+
+      // Prefer password-based JWT endpoint and fall back to legacy login if needed.
+      try {
+        response = await api.post('/token/', trimmedPayload);
+      } catch (tokenError) {
+        if (tokenError?.response?.status !== 404) {
+          throw tokenError;
+        }
+        response = await api.post('/auth/login/', trimmedPayload);
+      }
+
       const { access, refresh } = response.data;
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
@@ -82,12 +93,7 @@ const Login = () => {
       console.error('Login error:', err);
       const isNetworkError = err.code === 'ERR_NETWORK' || !err.response;
       
-      let errorMessage = err.response?.data?.detail || 'Invalid email or password.';
-      
-      // Specifically handle the "no active account" error which usually means email unverified
-      if (errorMessage.toLowerCase().includes('no active account')) {
-        errorMessage = 'Your account is not verified. Please check your email for the verification link.';
-      }
+      const errorMessage = getLoginErrorMessage(err);
 
       showToast(
         isNetworkError
