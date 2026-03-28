@@ -178,15 +178,6 @@ const Settings = () => {
 
         <Section title="Security" description="Protect your account and monitor sign-in activity.">
           <ToggleRow
-<<<<<<< HEAD
-=======
-            label="Two-factor authentication"
-            help="Require a verification code at sign-in for stronger protection."
-            checked={settings.twoFactorAuth}
-            onChange={() => updateToggle('twoFactorAuth')}
-          />
-          <ToggleRow
->>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
             label="New device sign-in alerts"
             help="Send alerts whenever your account is accessed from a new device."
             checked={settings.deviceAlerts}

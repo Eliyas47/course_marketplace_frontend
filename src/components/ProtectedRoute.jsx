@@ -20,12 +20,9 @@ const ProtectedRoute = ({ children, requiredRole }) => {
         setUser(response.data);
       } catch (err) {
         console.error('ProtectedRoute: Failed to fetch user profile', err);
-<<<<<<< HEAD
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         setUser(null);
-=======
->>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
       } finally {
         setIsLoading(false);
       }
@@ -33,10 +30,6 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
     fetchUser();
   }, [token]);
-<<<<<<< HEAD
-=======
-
->>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
   if (!token) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
@@ -49,18 +42,18 @@ const ProtectedRoute = ({ children, requiredRole }) => {
       </div>
     );
   }
-<<<<<<< HEAD
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (requiredRole && user?.role?.toLowerCase() !== requiredRole.toLowerCase()) {
-=======
-
-  if (requiredRole && user?.role?.toLowerCase() !== requiredRole.toLowerCase()) {
-    // Redirect to home if they don't have the required role
->>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
-    return <Navigate to="/" replace />;
+  if (requiredRole) {
+    const currentRole = user?.role?.toLowerCase();
+    const needed = requiredRole.toLowerCase();
+    
+    // Admin has access to all protected instructor/student routes
+    if (currentRole !== 'admin' && currentRole !== needed) {
+      return <Navigate to="/" replace />;
+    }
   }
 
   return children;

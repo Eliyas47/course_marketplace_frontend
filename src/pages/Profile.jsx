@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import api from '../api/axios';
+import { authApi, coursesApi } from '../api/lmsApi';
 import { useToast } from '../context/ToastContext';
 
 const Profile = () => {
@@ -9,11 +9,13 @@ const Profile = () => {
   const [headline, setHeadline] = useState('Frontend Learner | Building job-ready skills');
 
   const [isSaving, setIsSaving] = useState(false);
+  const [adminCategoryName, setAdminCategoryName] = useState('');
+  const [isCreatingAdminCategory, setIsCreatingAdminCategory] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const response = await api.get('/auth/profile/');
+        const response = await authApi.getProfile();
         setProfile(response.data);
       } catch (err) {
         console.error('Failed to load profile:', err);
@@ -36,7 +38,7 @@ const Profile = () => {
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
       };
-      const response = await api.put('/auth/profile/', payload);
+      const response = await authApi.updateProfile(payload);
       setProfile(response.data);
       showToast('Profile updated successfully!', 'success');
     } catch (err) {
@@ -49,6 +51,36 @@ const Profile = () => {
 
   const handleChange = (e) => {
     setProfile(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleCreateAdminCategory = async (e) => {
+    e.preventDefault();
+    const trimmed = adminCategoryName.trim();
+
+    if (!trimmed) {
+      showToast('Category name is required.', 'warning');
+      return;
+    }
+
+    setIsCreatingAdminCategory(true);
+    try {
+      await coursesApi.createCategory({ name: trimmed });
+      setAdminCategoryName('');
+      showToast('Category created successfully.', 'success');
+    } catch (err) {
+      console.error('Profile admin category create failed:', err?.response?.data || err);
+      if (err?.code === 'CATEGORY_CREATE_ENDPOINT_NOT_FOUND') {
+        showToast('Backend category create endpoint is not available.', 'warning');
+        return;
+      }
+
+      const data = err?.response?.data;
+      const detail = data?.detail || (typeof data === 'string' ? data : null);
+      const firstField = data && typeof data === 'object' ? Object.values(data).flat()[0] : null;
+      showToast(detail || firstField || 'Failed to create category.', 'error');
+    } finally {
+      setIsCreatingAdminCategory(false);
+    }
   };
 
   if (isLoading) {
@@ -117,6 +149,27 @@ const Profile = () => {
               </div>
             </div>
           </div>
+
+          {String(profile.role || '').toLowerCase() === 'admin' && (
+            <div className="glass p-6 rounded-2xl">
+              <h3 className="mb-4">Admin Tools</h3>
+              <p className="text-text-muted text-sm" style={{ marginBottom: '0.8rem' }}>
+                Create platform categories directly from your admin profile panel.
+              </p>
+              <form onSubmit={handleCreateAdminCategory} className="flex flex-col gap-3">
+                <input
+                  className="glass"
+                  value={adminCategoryName}
+                  onChange={(e) => setAdminCategoryName(e.target.value)}
+                  placeholder="e.g. Cybersecurity"
+                  style={{ width: '100%', padding: '0.8rem 1rem', borderRadius: '10px', border: '1px solid var(--border)' }}
+                />
+                <button className="btn btn-primary" type="submit" disabled={isCreatingAdminCategory}>
+                  {isCreatingAdminCategory ? 'Creating...' : 'Create Category'}
+                </button>
+              </form>
+            </div>
+          )}
 
           <div className="flex justify-between items-center" style={{ flexWrap: 'wrap', gap: '0.75rem' }}>
             <p className="text-text-muted text-sm">Personalizing your profile helps in better course recommendations.</p>

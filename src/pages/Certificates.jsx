@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../api/axios';
+import { certificatesApi, responseUtils } from '../api/lmsApi';
 import { useToast } from '../context/ToastContext';
 
 const Certificates = () => {
@@ -10,9 +10,8 @@ const Certificates = () => {
   useEffect(() => {
     const fetchCertificates = async () => {
       try {
-        // Backend: /certificates/my-certificates/
-        const response = await api.get('/certificates/my-certificates/');
-        setCertificates(response.data.results || response.data || []);
+        const response = await certificatesApi.myCertificates();
+        setCertificates(responseUtils.toArray(response.data));
       } catch (err) {
         console.error('Failed to fetch certificates:', err);
         showToast('Unable to load your certificates. Please try again.', 'error');

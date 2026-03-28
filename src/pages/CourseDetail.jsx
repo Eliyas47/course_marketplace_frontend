@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import api from '../api/axios';
+import { coursesApi, enrollmentsApi } from '../api/lmsApi';
 import { useToast } from '../context/ToastContext';
 
 const CourseDetail = () => {
@@ -15,7 +15,7 @@ const CourseDetail = () => {
   const handleEnroll = async () => {
     setIsEnrolling(true);
     try {
-      await api.post('/enrollments/enroll/', { course: id });
+      await enrollmentsApi.enroll(id);
       showToast('Successfully enrolled! You can now start learning.', 'success');
       navigate(`/learn/${id}`);
     } catch (err) {
@@ -30,6 +30,22 @@ const CourseDetail = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const response = await coursesApi.detail(id);
+        setCourse(response.data);
+      } catch (err) {
+        console.error('Failed to fetch course details:', err);
+        showToast('Unable to load this course right now.', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCourse();
+  }, [id, showToast]);
+
   if (isLoading) return <div style={{ paddingTop: '150px', textAlign: 'center' }}><h2>Loading course details...</h2></div>;
   if (!course) return <div style={{ paddingTop: '150px', textAlign: 'center' }}><h2>Course not found</h2></div>;
 
@@ -37,13 +53,13 @@ const CourseDetail = () => {
     <div className="course-detail-container animate-fade-in">
       {/* Course Hero Banner */}
       <section className="course-hero glass">
-        <div className="container flex gap-10 py-12">
+        <div className="container course-hero-container gap-10 py-12">
           <div className="course-hero-info flex-1">
             <span className="badge">{course.category_name || course.category}</span>
             <h1 className="mt-4 mb-6">{course.title}</h1>
             <p className="text-lg text-text-muted mb-8">{course.description}</p>
             
-            <div className="course-stats flex gap-8 items-center">
+            <div className="course-stats flex gap-8 items-center" style={{ flexWrap: 'wrap' }}>
               <div className="flex items-center gap-2">⭐ <span style={{ fontWeight: 700 }}>{course.average_rating || 'N/A'}</span></div>
               <div className="flex items-center gap-2">👤 <span style={{ fontWeight: 700 }}>{course.enrolled_count || '0'}</span> <span className="text-text-muted">students</span></div>
               <div className="flex items-center gap-2">📅 <span className="text-text-muted">Last updated {new Date(course.updated_at || Date.now()).toLocaleDateString()}</span></div>
@@ -58,7 +74,7 @@ const CourseDetail = () => {
             </div>
           </div>
 
-          <div className="course-checkout-card glass p-6 rounded-3xl" style={{ width: '380px', position: 'relative', marginTop: '-100px', zIndex: 10 }}>
+          <div className="course-checkout-card glass p-6 rounded-3xl" style={{ position: 'relative', zIndex: 10 }}>
             <div className="course-preview-img mb-6">
               <img src={course.thumbnail || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=500&auto=format&fit=crop'} alt={course.title} style={{ width: '100%', borderRadius: '20px' }} />
             </div>
@@ -68,10 +84,9 @@ const CourseDetail = () => {
             </div>
             <button 
               className="btn btn-primary w-full py-4 text-lg mb-4" 
-              onClick={handleEnroll}
-              disabled={isEnrolling}
+              onClick={() => navigate(`/checkout/${id}`)}
             >
-              {isEnrolling ? 'Processing...' : 'Enroll Now'}
+              Enroll Now
             </button>
             <p className="text-center text-sm text-text-muted">Instant Access to All Course Materials</p>
             

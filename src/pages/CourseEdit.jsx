@@ -2,6 +2,37 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api/axios';
 
+const normalizeCategories = (data) => {
+  const rawItems = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.results)
+      ? data.results
+      : Array.isArray(data?.categories)
+        ? data.categories
+        : [];
+
+  return rawItems
+    .map((item) => {
+      if (typeof item === 'string') {
+        return { id: item, name: item };
+      }
+
+      if (!item || typeof item !== 'object') {
+        return null;
+      }
+
+      const id = item.id || item.uuid || item.slug || item.name;
+      const name = item.name || item.title || String(id || '');
+
+      if (!id || !name) {
+        return null;
+      }
+
+      return { id: String(id), name: String(name) };
+    })
+    .filter(Boolean);
+};
+
 const CourseEdit = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
@@ -29,11 +60,11 @@ const CourseEdit = () => {
         setFormData({
           title: course.title,
           description: course.description,
-          category: course.category,
+          category: String(course.category?.id || course.category?.uuid || course.category || ''),
           price: course.price,
           is_published: course.is_published,
         });
-        setCategories(categoriesRes.data);
+        setCategories(normalizeCategories(categoriesRes.data));
       } catch (err) {
         console.error('Failed to fetch data:', err);
         setError('Could not load course data.');

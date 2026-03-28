@@ -1,28 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import api from '../api/axios';
-<<<<<<< HEAD
 import learnhubLogo from '../assets/learnhub-logo.png';
-=======
->>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [profile, setProfile] = useState({ username: 'Guest', role: 'student' });
+  const [profile, setProfile] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
   const getInitials = (username) => {
-    if (!username) return 'GU';
+    if (!username) return 'U';
     return username
       .split(/[\s._-]+/)
       .filter(Boolean)
       .slice(0, 2)
       .map((part) => part[0]?.toUpperCase() || '')
-      .join('') || 'GU';
+        .join('') || 'U';
   };
 
   useEffect(() => {
@@ -36,18 +33,21 @@ const Navbar = () => {
       setIsLoggedIn(!!token);
 
       if (!token) {
-        setProfile(null); // Changed from { username: 'Guest', role: 'student' }
+        setProfile(null);
         return;
       }
 
       try {
         const response = await api.get('/auth/profile/');
         setProfile({
-          username: response.data?.username || 'Guest',
+          username: response.data?.username || 'User',
           role: response.data?.role || 'student',
         });
       } catch {
-        setProfile({ username: 'Guest', role: 'student' });
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        setIsLoggedIn(false);
+        setProfile(null);
       }
     };
 
@@ -87,32 +87,48 @@ const Navbar = () => {
     navigate('/');
   };
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
   return (
     <nav className={`navbar ${isScrolled ? 'scrolled glass' : ''}`}>
       <div className="container nav-container">
-        <Link to="/" className="nav-logo">
-<<<<<<< HEAD
-          <img
-            src={learnhubLogo}
-            alt="LearnHub Course Marketplace"
-            className="brand-logo-image"
-          />
-=======
-          <div className="logo-icon">
-            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-          </div>
-          <span className="text-gradient font-heading">
-            LearnHub
-          </span>
->>>>>>> d8b7f9f32ff6e12b09a03669c97672a07fff7509
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button 
+            className="mobile-menu-btn" 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle navigation"
+          >
+            <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+            <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+            <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+          </button>
+          
+          <Link to="/" className="nav-logo" onClick={() => setIsMobileMenuOpen(false)}>
+            <img
+              src={learnhubLogo}
+              alt="LearnHub Course Marketplace"
+              className="brand-logo-image"
+            />
+          </Link>
+        </div>
 
-        <div className="nav-links">
-          <Link to="/courses">Courses</Link>
-          <Link to="/categories">Categories</Link>
-          <Link to="/instructors">Instructors</Link>
+        <div className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+          <Link to="/courses" onClick={() => setIsMobileMenuOpen(false)}>Courses</Link>
+          <Link to="/categories" onClick={() => setIsMobileMenuOpen(false)}>Categories</Link>
+          <Link to="/instructors" onClick={() => setIsMobileMenuOpen(false)}>Instructors</Link>
+          
+          {/* Show Auth links in mobile menu if not logged in */}
+          {!isLoggedIn && isMobileMenuOpen && (
+            <div className="mobile-auth-links">
+              <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>Log In</Link>
+              <Link to="/register" className="btn btn-primary" onClick={() => setIsMobileMenuOpen(false)}>Join Free</Link>
+            </div>
+          )}
         </div>
 
         <div className="nav-actions">
@@ -182,10 +198,10 @@ const Navbar = () => {
               )}
             </div>
           ) : (
-            <>
+            <div className="desktop-auth-actions">
               <Link to="/login" style={{color: 'var(--text-muted)', fontWeight: '500'}}>Log In</Link>
               <Link to="/register" className="btn btn-primary text-sm py-2 px-6">Join Free</Link>
-            </>
+            </div>
           )}
         </div>
       </div>

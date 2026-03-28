@@ -12,7 +12,9 @@ import Dashboard from './pages/Dashboard';
 import Certificates from './pages/Certificates';
 import CourseCreate from './pages/CourseCreate';
 import CourseEdit from './pages/CourseEdit';
+import CourseContentManager from './pages/CourseContentManager';
 import AdminDashboard from './pages/AdminDashboard';
+import Categories from './pages/Categories';
 import CoursePlayer from './pages/CoursePlayer';
 import Profile from './pages/Profile';
 import VerifyEmail from './pages/VerifyEmail';
@@ -20,6 +22,7 @@ import PasswordResetRequest from './pages/PasswordResetRequest';
 import PasswordResetConfirm from './pages/PasswordResetConfirm';
 import Settings from './pages/Settings';
 import ProtectedRoute from './components/ProtectedRoute';
+import Checkout from './pages/Checkout';
 
 function App() {
   return (
@@ -32,7 +35,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           
           <Route path="/courses" element={<CourseListing />} />
-          <Route path="/categories" element={<Navigate to="/courses" replace />} />
+          <Route path="/categories" element={<Categories />} />
           <Route path="/instructors" element={<Instructors />} />
           <Route path="/courses/:id" element={<CourseDetail />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
@@ -62,6 +65,11 @@ function App() {
               <CoursePlayer />
             </ProtectedRoute>
           } />
+          <Route path="/checkout/:id" element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          } />
           
           {/* Instructor Specific Routes */}
           <Route path="/instructor/dashboard" element={
@@ -72,6 +80,11 @@ function App() {
           <Route path="/courses/create" element={
             <ProtectedRoute requiredRole="instructor">
               <CourseCreate />
+            </ProtectedRoute>
+          } />
+          <Route path="/instructor/courses/:id/content" element={
+            <ProtectedRoute requiredRole="instructor">
+              <CourseContentManager />
             </ProtectedRoute>
           } />
           <Route path="/courses/:id/edit" element={
